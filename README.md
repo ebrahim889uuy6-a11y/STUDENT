@@ -1,2 +1,1 @@
-# STUDENT
-SMART
+index.php
