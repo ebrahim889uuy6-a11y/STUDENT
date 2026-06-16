@@ -1,0 +1,156 @@
+<?php
+// 3. معالجة النموذج باستخدام PHP
+$message = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // استلام بيانات النموذج المرسل
+    $student_name = htmlspecialchars(trim($_POST['student_name']));
+    $student_email = htmlspecialchars(trim($_POST['student_email']));
+    $student_id = htmlspecialchars(trim($_POST['student_id']));
+    $study_year = htmlspecialchars(trim($_POST['study_year']));
+    $batch_name = htmlspecialchars(trim($_POST['batch_name']));
+
+    // التحقق من أن جميع الحقول ممتلئة
+    if (!empty($student_name) && !empty($student_email) && !empty($student_id) && !empty($study_year) && !empty($batch_name)) {
+        
+        // تجهيز السطر المراد تخزينه وفصل البيانات بـ (,)
+        $student_data = "$student_name,$student_email,$student_id,$study_year,$batch_name\n";
+        
+        // تخزين معلومات الطلاب في ملف (FILE_APPEND تأتي للتأكد من عدم استبدال السجلات الموجودة)
+        file_put_contents("students.txt", $student_data, FILE_APPEND);
+        
+        $message = "<div class='alert success'>تم تسجيل الطالب بنجاح!</div>";
+    } else {
+        $message = "<div class='alert danger'>يرجى ملء جميع الحقول المطلوبة.</div>";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج تسجيل الطالب</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 20px; /* تباعد ومحاذاة مناسبان */
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        .btn-submit {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #45a049;
+        }
+        .nav-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            text-decoration: underline;
+        }
+        .alert {
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .success { background-color: #d4edda; color: #155724; }
+        .danger { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>نموذج تسجيل الطالب</h2>
+        
+        <?php echo $message; ?>
+
+        <form action="index.php" method="POST">
+            <div class="form-group">
+                <label for="student_name">اسم الطالب:</label>
+                <input type="text" id="student_name" name="student_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="student_email">البريد الإلكتروني:</label>
+                <input type="email" id="student_email" name="student_email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="student_id">رقم الطالب:</label>
+                <input type="number" id="student_id" name="student_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="study_year">سنة الدراسة:</label>
+                <input type="text" id="study_year" name="study_year" placeholder="مثال: الأولى، الثانية" required>
+            </div>
+
+            <div class="form-group">
+                <label for="batch_name">اسم الدفعة:</label>
+                <input type="text" id="batch_name" name="batch_name" required>
+            </div>
+
+            <button type="submit" class="btn-submit">تسجيل الطالب</button>
+        </form>
+
+        <a href="students.php" class="nav-link">عرض قائمة الطلاب المسجلين ←</a>
+    </div>
+
+</body>
+</html>
